@@ -6,5 +6,3 @@ export const BASE_URL = 'https://pixabay.com/api/',
     safesearch: true,
     per_page: 12,
   });
-
-

@@ -15,9 +15,10 @@ class App extends Component {
     name: '',
     page: 1,
     showModal: false,
-    loading: false,
     largeImageURL: '',
     tags: '',
+    totalHits: null,
+    cat: true,
   };
 
   toggleModal = (imageURL, tag) => {
@@ -28,42 +29,50 @@ class App extends Component {
     }));
   };
 
-  getValue = ({ name, page }) => {
-    this.setState({ loading: true });
+  getValue = ({ name, page, totalHits }) => {
+    this.setState({});
     try {
       axios
         .get(
           `${BASE_URL}?key=${API_KEY}&q=${name}&page=${page}&${SEARCH_PARAMS}`
         )
         .then(response => {
+          const total = response.data.totalHits;
+
           if (!response.data.hits.length) {
+            this.setState({
+              totalHits: total,
+            });
             Notiflix.Notify.failure('No images found!');
           } else if (name === this.state.name) {
             this.setState(state => ({
               hits: [...state.hits, ...response.data.hits],
               name: name,
               page: state.page + 1,
+              totalHits: total,
             }));
           } else {
             this.setState(state => ({
               hits: response.data.hits,
               name: name,
               page: state.page + 1,
+              totalHits: total,
             }));
           }
         });
     } catch (error) {
       console.error(error.message);
     }
-
   };
+
+
 
   loadMore = () => {
     this.getValue(this.state);
   };
 
   render() {
-    const { hits, showModal, largeImageURL, tags } = this.state;
+    const { hits, showModal, largeImageURL, tags, totalHits } = this.state;
 
     return (
       <div>
@@ -79,7 +88,7 @@ class App extends Component {
           <Modal onClose={this.toggleModal} url={largeImageURL} alt={tags} />
         )}
 
-        {hits.length > 0 && (
+        {hits.length > 0 && hits.length !== totalHits && (
           <LoadMoreBtn onButtonClick={() => this.loadMore()} />
         )}
       </div>
