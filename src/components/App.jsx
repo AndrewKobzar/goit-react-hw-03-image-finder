@@ -29,7 +29,7 @@ class App extends Component {
     }));
   };
 
-  getValue = ({ name, page, totalHits }) => {
+  getValue = ({ name, page }) => {
     this.setState({});
     try {
       axios
@@ -38,7 +38,6 @@ class App extends Component {
         )
         .then(response => {
           const total = response.data.totalHits;
-
           if (!response.data.hits.length) {
             this.setState({
               totalHits: total,
@@ -59,10 +58,13 @@ class App extends Component {
               totalHits: total,
             }));
           }
+
+      console.log(total);
         });
     } catch (error) {
       console.error(error.message);
     }
+    
   };
 
 
@@ -73,7 +75,7 @@ class App extends Component {
 
   render() {
     const { hits, showModal, largeImageURL, tags, totalHits } = this.state;
-
+console.log(hits.length);
     return (
       <div>
         <Searchbar onSubmitHandler={this.getValue} />
